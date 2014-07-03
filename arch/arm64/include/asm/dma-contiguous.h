@@ -1,6 +1,5 @@
-/**
- *
- * Copyright (c) 2011-2012, The Linux Foundation. All rights reserved.
+/*
+ * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -12,18 +11,20 @@
  * GNU General Public License for more details.
  */
 
-#ifndef __MACH_ION_H_
-#define __MACH_ION_H_
+#ifndef _ASM_DMA_CONTIGUOUS_H
+#define _ASM_DMA_CONTIGUOUS_H
 
-enum ion_memory_types {
-	ION_EBI_TYPE,
-	ION_SMI_TYPE,
-};
+#ifdef __KERNEL__
+#ifdef CONFIG_CMA
 
-enum ion_permission_type {
-	IPT_TYPE_MM_CARVEOUT = 0,
-	IPT_TYPE_MFC_SHAREDMEM = 1,
-	IPT_TYPE_MDP_WRITEBACK = 2,
-};
+#include <linux/types.h>
+#include <asm-generic/dma-contiguous.h>
+
+static inline void
+dma_contiguous_early_fixup(phys_addr_t base, unsigned long size) { }
+static inline void __init dma_contiguous_early_removal_fixup(void) { }
+
+#endif
+#endif
 
 #endif

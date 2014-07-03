@@ -38,27 +38,6 @@
 #include "platsmp.h"
 #include "modem_notifier.h"
 
-static struct memtype_reserve apq8084_reserve_table[] __initdata = {
-	[MEMTYPE_SMI] = {
-	},
-	[MEMTYPE_EBI0] = {
-		.flags  =       MEMTYPE_FLAGS_1M_ALIGN,
-	},
-	[MEMTYPE_EBI1] = {
-		.flags  =       MEMTYPE_FLAGS_1M_ALIGN,
-	},
-};
-
-static int apq8084_paddr_to_memtype(phys_addr_t paddr)
-{
-	return MEMTYPE_EBI1;
-}
-
-static struct reserve_info apq8084_reserve_info __initdata = {
-	.memtype_reserve_table = apq8084_reserve_table,
-	.paddr_to_memtype = apq8084_paddr_to_memtype,
-};
-
 static struct of_dev_auxdata apq8084_auxdata_lookup[] __initdata = {
 	OF_DEV_AUXDATA("qcom,msm-sdcc", 0xF9824000, \
 			"msm_sdcc.1", NULL),
@@ -69,15 +48,7 @@ static struct of_dev_auxdata apq8084_auxdata_lookup[] __initdata = {
 
 void __init apq8084_reserve(void)
 {
-	reserve_info = &apq8084_reserve_info;
-	of_scan_flat_dt(dt_scan_for_memory_reserve, apq8084_reserve_table);
-	msm_reserve();
-}
-
-static void __init apq8084_early_memory(void)
-{
-	reserve_info = &apq8084_reserve_info;
-	of_scan_flat_dt(dt_scan_for_memory_hole, apq8084_reserve_table);
+	of_scan_flat_dt(dt_scan_for_memory_reserve, NULL);
 }
 
 /*
@@ -115,11 +86,6 @@ void __init apq8084_init(void)
 	apq8084_add_drivers();
 }
 
-void __init apq8084_init_very_early(void)
-{
-	apq8084_early_memory();
-}
-
 static const char *apq8084_dt_match[] __initconst = {
 	"qcom,apq8084",
 	NULL
@@ -133,7 +99,6 @@ DT_MACHINE_START(APQ8084_DT, "Qualcomm APQ 8084 (Flattened Device Tree)")
 	.timer = &msm_dt_timer,
 	.dt_compat = apq8084_dt_match,
 	.reserve = apq8084_reserve,
-	.init_very_early = apq8084_init_very_early,
 	.restart = msm_restart,
 	.smp = &msm8974_smp_ops,
 MACHINE_END
